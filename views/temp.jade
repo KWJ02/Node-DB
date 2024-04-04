@@ -1,0 +1,17 @@
+doctype html 
+html
+  head
+    title= _title 
+  body
+    h1 Hello Jade
+    ul 
+      - for(i = 0; i < 5; i++)
+        li coding
+    div=  time
+    form(action="/form_receiver" method='post')
+      p
+        input(type='text' name='title')
+      p 
+        input(type='text' name='description')
+      p 
+        input(type='submit')
