@@ -21,6 +21,8 @@ app.listen(3000, () => {
   console.log('Server is connected at 3000 port')
 })
 
+
+// 글 쓰기 페이지
 app.get('/topic/add', (req, res) => {
   let sql = 'SELECT id, title FROM topic'
   conn.query(sql, (err, topics, fields) => {
@@ -32,6 +34,10 @@ app.get('/topic/add', (req, res) => {
   })
 })
 
+
+// post 라우트는 html의 form 태그에서 method로 결정되며, url 주소는 form 태그의 action 속성값으로 설정함
+// 또한 post는 get과 같이 앞에서 보여지는 것이 아닌 정보를 처리한 후 리다이렉션으로 처리된 정보를 get시켜주는 역할을 함.
+// 글 등록 시 정보 전송 및 리다이렉트되는 라우트
 app.post('/topic/add', (req,res) => {
   let title = req.body.title
   let description = req.body.description
@@ -48,8 +54,10 @@ app.post('/topic/add', (req,res) => {
     res.redirect('/topic/' + rows.insertId)
   })
 })
-                                                  // + 쿼리스트링의 경우는 req의 query로 접근한다.
-app.get(['/topic', '/topic/:id'], (req, res) => { // 시멘틱 url, id에 접근하는 방법은 req의 params 객체로 접근한다.
+
+
+// 글 목록 불러오는 페이지                         // + 쿼리스트링(/topic?id=0)의 경우는 req의 query로 id 변수에 접근한다.
+app.get(['/topic', '/topic/:id'], (req, res) => { // 시멘틱 url(/topic/0)의 경우, id에 접근하는 방법은 req의 params 객체로 id 변수에 접근한다.
   let sql = 'SELECT id, title FROM topic'
   conn.query(sql, (err, topics, fields) => {
     if(err){
@@ -90,5 +98,39 @@ app.post('/topic', (req, res) => {
       res.status(500).send("Internal Server Error")
     }
     res.redirect('/topic')
+  })
+})
+
+
+// 글 수정 페이지
+app.get('/topic/:id/edit', (req,res) => {
+  let id = req.params.id
+  sql = 'SELECT * FROM topic WHERE id=?'
+  conn.query(sql, [id], (err, topic, fields) => {   
+    if(id){ // id가 없으면 수정을 못하니까 else에 오류문
+      res.render('edit', {topics : topic, topic : topic[0]})
+    } else {
+      console.log("There is no ID")
+      res.status(500).send("Internal Server Error")
+    }
+  })
+})
+
+
+// 글 수정 시 정보 전송 및 리다이렉트 라우트
+app.post('/topic/:id/edit', (req, res) => {
+  let id = req.params.id
+  let title = req.body.title
+  let description = req.body.description
+  let author = req.body.author
+
+  let sql = 'UPDATE topic SET title=?, description=?, author=? WHERE id=?' // sql에서 변수 ? 순서와
+
+  conn.query(sql, [title,description,author,id], (err, result, fields) => { // 두번째 인자로 들어가는 배열의 변수 순서가 맞아야함. 틀리면 교체가 안됨
+    if(err){
+      console.log(err)
+      res.status(500).send("Internal Server Error")
+    }
+    res.redirect('/topic/' + id)
   })
 })

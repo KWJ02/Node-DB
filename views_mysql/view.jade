@@ -6,7 +6,7 @@ html
     h1 
       a(href='/topic' style='text-decoration-line : none') Server Side Javascript
     ul <!-- jade에서의 프로그래밍도 들여쓰기 생각해야함 -->
-      each topic in topics 
+      each topic in topics
         li
           a(href=`/topic/${topic.id}`)= topic.title
     article 
@@ -17,5 +17,11 @@ html
       else 
         h2 Welcome
         | This is server side javascript tutorial.
-    div
-      a(href='/topic/add' style='background-color: #FFA500; color: maroon; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 글쓰기
+    ul
+      if topic
+        li 
+          a(href='/topic/'+topic.id+'/edit' style='margin : 10px; background-color: #42A500; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 수정하기
+      else 
+        li
+          a(href='/topic/add' style='margin : 10px; background-color: #42A500; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 글쓰기   
+      
