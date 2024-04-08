@@ -56,6 +56,7 @@ app.post('/topic/add', (req,res) => {
 })
 
 
+// XAMPP로 DB안키면 topic 자체를 정의할 수 없기 때문에 오류먹음
 // 글 목록 불러오는 페이지                         // + 쿼리스트링(/topic?id=0)의 경우는 req의 query로 id 변수에 접근한다.
 app.get(['/topic', '/topic/:id'], (req, res) => { // 시멘틱 url(/topic/0)의 경우, id에 접근하는 방법은 req의 params 객체로 id 변수에 접근한다.
   let sql = 'SELECT id, title FROM topic'
@@ -71,8 +72,8 @@ app.get(['/topic', '/topic/:id'], (req, res) => { // 시멘틱 url(/topic/0)의 
           console.log(err)
           res.status(500).send("Internal Server Error")
         }
-        console.log(topic)
-        console.log(topic[0])
+        console.log(topic) // 객체의 리스트를 값으로 갖는 객체
+        console.log(topic[0]) // 그 객체의 첫번째 객체
         /* 
         여기서 topic은 데이터베이스 상의 topic이라는 테이블에서 id가 ?인 하나의 row를 가져온 객체임.
         다른 말로 전체 row를 감싸는 객체 안에 RowDataPacket이라는 객체(id가 ?인 row)가 존재하는 형식(= 객체 안의 객체)
@@ -116,6 +117,28 @@ app.get('/topic/:id/edit', (req,res) => {
   })
 })
 
+// 글 삭제 페이지
+app.get('/topic/:id/delete', (req, res) => {
+  let sql = 'SELECT id, title FROM topic'
+  let id = req.params.id
+  conn.query(sql, (err, topics, fields) => {
+    let sql = 'SELECT * FROM topic WHERE id=?'
+    conn.query(sql, id, (err, topic) => {
+      if(err){
+        console.log(err)
+        res.status(500).send("Internal Server Error")
+      } else {
+        if(topic.length === 0){
+          console.log('There is no record')
+          res.status(500).send("Internal Server Error")
+        } else {
+          res.render('delete', {topics : topics, topic : topic[0]})
+        }
+      }
+    })
+  })
+})
+
 
 // 글 수정 시 정보 전송 및 리다이렉트 라우트
 app.post('/topic/:id/edit', (req, res) => {
@@ -132,5 +155,19 @@ app.post('/topic/:id/edit', (req, res) => {
       res.status(500).send("Internal Server Error")
     }
     res.redirect('/topic/' + id)
+  })
+})
+
+app.post('/topic/:id/delete', (req, res) => {
+  let id = req.params.id
+
+  let sql = 'DELETE FROM topic WHERE id=?'
+
+  conn.query(sql, [id], (err, result, fields) => {
+    if(err){
+      console.log(err)
+      res.status(500).send("Internal Server Error")
+    }
+    res.redirect('/topic')
   })
 })

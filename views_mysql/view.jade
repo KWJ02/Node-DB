@@ -17,11 +17,10 @@ html
       else 
         h2 Welcome
         | This is server side javascript tutorial.
-    ul
-      if topic
-        li 
-          a(href='/topic/'+topic.id+'/edit' style='margin : 10px; background-color: #42A500; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 수정하기
-      else 
-        li
-          a(href='/topic/add' style='margin : 10px; background-color: #42A500; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 글쓰기   
+
+    if topic 
+      a(href='/topic/'+topic.id+'/edit' style='margin : 10px; background-color: #42A500; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 수정하기  
+      a(href='/topic/'+topic.id+'/delete' style='margin : 10px; background-color: red; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 삭제하기
+    else 
+      a(href='/topic/add' style='margin : 10px; background-color: #42A500; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 글쓰기   
       

@@ -1,0 +1,18 @@
+doctype html
+html 
+  head 
+    meta(charset='utf-8')
+  body
+    h1 
+      a(href='/topic' style='text-decoration-line : none') Server Side Javascript
+    ul
+      each topic in topics
+        li
+          a(href=`/topic/${topic.id}`)= topic.title
+          
+    article 
+      h2= topic.title + ' 삭제할거야?'
+      form(action='/topic/' + topic.id + '/delete' method='post')
+        p 
+          input(type='submit' value='삭제' style='margin : 10px; background-color: red; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block')
+      a(href='/topic/'+topic.id style='margin : 10px; background-color: #78ab21; color: white; padding: 15px 25px;; text-align: center; text-decoration: none; display: inline-block') 돌아가기
